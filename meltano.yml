@@ -26,6 +26,18 @@ plugins:
       kind: string
     - name: end_date
       kind: string
+    - name: custom_reports
+      kind: array
+    config:
+      custom_reports:
+        - name: test1
+          gaql: SELECT campaign.id, campaign.name FROM campaign ORDER BY campaign.id
+          primary_keys_jsonpaths:
+            - campaign.id
+            - campaign.name
+          schema_filepath: test_schema.json
+    select:
+      - test1.*
   loaders:
   - name: target-jsonl
     variant: andyh1203

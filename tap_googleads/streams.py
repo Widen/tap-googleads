@@ -1,5 +1,6 @@
 """Stream type classes for tap-googleads."""
 
+import json
 from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable
 
@@ -474,3 +475,24 @@ class ConversionsByLocation(ReportsStream):
     primary_keys = ["_sdc_primary_key"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "conversion_by_location.json"
+
+
+class CustomReport(ReportsStream):
+    """Dynamic Stream for custom reports."""
+
+    def __init__(self, tap: Any, name: str, gaql: str, primary_keys_jsonpaths: list, primary_keys: list,
+                 replication_key: str, schema_filepath: str):
+
+        with open(schema_filepath, 'r') as f:
+            schema = json.loads(f.read())
+
+        super().__init__(tap=tap, name=tap.name, schema=schema)
+        self.name = name
+        self.gaql_query = gaql
+        self.primary_keys_jsonpaths = primary_keys_jsonpaths
+        self.primary_keys = primary_keys
+        self.replication_key = replication_key
+
+    @property
+    def gaql(self):
+        return self.gaql_query
